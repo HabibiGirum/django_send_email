@@ -14,10 +14,13 @@ from django.template.loader import render_to_string
 
 from django.core.mail import send_mail
 from django.conf import settings
+# import os
+import subprocess
 
 
 
-def index(request):
+def index(request,mac_address=''):
+    
     if request.method == 'POST':
         search_data = request.POST.get('search')
         users = User.objects.filter(Q(first_name__contains=search_data) | Q(last_name__contains=search_data))\
@@ -29,7 +32,13 @@ def index(request):
     page = request.GET.get('page', 1)
     page_users = paginator.get_page(page)
 
-    return render(request, 'profile.html', {'users': page_users})
+    context = {
+        'mac_address': mac_address,
+        # Add other context variables as needed
+    }
+    print(mac_address)
+
+    return redirect(request, 'profile.html', {'users': page_users})
 
 
 # def projects(request):
@@ -75,27 +84,48 @@ def index(request):
 
 #     return HttpResponseForbidden
 
+def get_mac_address():
+    try:
+        # Use subprocess to execute the osquery command
+        command = [
+            '/Applications/Vistar.app/Contents/MacOS/osqueryi',
+            '--header=false',  # Remove header from the output
+            '--csv',           # Output in CSV format
+            'SELECT REPLACE(CONCAT(hostname, "-", uuid), "-", "_") FROM system_info;'
+        ]
+        result = subprocess.run(command, capture_output=True, text=True)
+        mac_address = result.stdout.strip()
+        return mac_address
+    except Exception as e:
+        print(f"Failed to get MAC address: {e}")
+        return None
+
 # @login_required
 def sendMessage(request):
     user_to = request.user.email
 
     subject="Registeration"
-    template_path = 'templates/Registeration.html'
 
     from_user=settings.EMAIL_HOST_USER
-    message_htm="Hello this email"
+    message_text="Hello this email"
 
     try:
-        # message_html = render_to_string(template_path)
-
         send_mail(
             subject,
-            message_htm,
+            message_text,
             from_user,
             [user_to],
             fail_silently=False,
         )
-        messages.success(request, 'Email sent successfully!')
+
+        mac_address = get_mac_address()
+
+        redirect_url = f"/main/index/{mac_address}/"
+        url = redirect_url
+        return redirect(url)
+        # return redirect(url)
+
+        # messages.success(request, 'Email sent successfully!')
     except Exception as e:
         messages.error(request, f'Failed to send email: {e}')
-    return redirect('index')
+    return redirect(url, mac_address)
