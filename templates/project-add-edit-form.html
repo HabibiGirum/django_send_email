@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+  <!-- Icon - IconMonster -->
+  <link rel="stylesheet" href="https://cdn.iconmonstr.com/1.3.0/css/iconmonstr-iconic-font.min.css" />
+  <!-- Mumble UI -->
+  <link rel="stylesheet" href="{% static 'uikit/styles/uikit.css' %}" />
+  <!-- Dev Search UI -->
+  <link rel="stylesheet" href="{% static 'styles/app.css' %}" />
+
+    <title>DevSearch - Connect with Developers!</title>
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="container container--narrow">
+            <a href="/" class="header__logo">
+                <img src="{% static 'images/logo.svg' %}" alt="DevSearch Logo" />
+            </a>
+            <nav class="header__nav">
+                <input type="checkbox" id="responsive-menu" />
+                <label for="responsive-menu" class="toggle-menu">
+                    <span>Menu</span>
+                    <div class="toggle-menu__lines"></div>
+                </label>
+                <ul class="header__menu">
+                    <li class="header__menuItem"><a href="{% url 'index' %}">Developers</a></li>
+                    <li class="header__menuItem"><a href="{% url 'projects' %}">Projects</a></li>
+                    <li class="header__menuItem"><a href="{% url 'inbox' %}">Inbox</a></li>
+                    <li class="header__menuItem"><a href="{% url 'account' %}">My Account</a></li>
+                   {% if request.user.username %}
+                       <li class="header__menuItem"><a href="{% url 'logout' %}" class="btn btn--sub">Log Out</a></li>
+                    {% else %}
+                       <li class="header__menuItem"><a href="{% url 'login' %}" class="btn btn--sub">Login/Sign Up</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <main class="formPage my-xl">
+        <div class="content-box">
+            <div class="formWrapper">
+                <a class="backButton" href="{% url 'account' %}"><i class="im im-angle-left"></i></a>
+                <br>
+
+                <form class="form" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Input:Text -->
+                    <div class="form__field">
+                        <label for="formInput#text">Project Title: </label>
+                        <input class="input input--text" id="formInput#text" type="text" name="title" required
+                            value="{{ project.title }}" />
+                    </div>
+
+                    <div class="form__field">
+                        <label for="formInput#text">Project Description: </label>
+                        <textarea class="input input--text" id="formInput#text" type="text" name="description" required>{{ project.description }}</textarea>
+                    </div>
+
+                    <div class="form__field">
+                        <label for="formInput#text">Source Code Link: </label>
+                        <input class="input input--text" id="formInput#text" type="text" name="link" required
+                            value="{{ project.link }}" />
+                    </div>
+
+                    <div class="form__field">
+                        <label for="formInput#text">Tags: </label>
+                        <input class="input input--text" id="formInput#text" type="text" name="tags"
+                            placeholder="e.g Django, PosgreSQL, React" required
+                            value="{% for tag in project.tags %} {{ tag }}, {% endfor %}" />
+                    </div>
+
+                    <div class="form__field">
+                        <label for="formInput#text">Featured Image: </label>
+                        <input class="input input--text" id="formInput#text" type="file" accept="image/*" name="image" />
+                    </div>
+                    {% for msg in messages %}
+                        <p>{{ msg }}</p>
+                    {% endfor %}
+                    <input class="btn btn--sub btn--lg  my-md" type="submit" value="Submit" />
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

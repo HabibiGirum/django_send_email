@@ -1,0 +1,72 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon" />
+  <!-- Icon - IconMonster -->
+  <link rel="stylesheet" href="https://cdn.iconmonstr.com/1.3.0/css/iconmonstr-iconic-font.min.css" />
+  <!-- Mumble UI -->
+  <link rel="stylesheet" href="{% static 'uikit/styles/uikit.css' %}" />
+  <!-- Dev Search UI -->
+  <link rel="stylesheet" href="{% static 'styles/app.css' %}" />
+
+    <title>DevSearch - Connect with Developers!</title>
+  </head>
+
+  <body>
+    <div class="auth">
+      <div class="card">
+        <!-- <div class="auth__header text-center">
+          <a href="{% url 'index' %}">
+            <img src="{% static 'images/icon.svg' %}" alt="icon" />
+          </a>
+          <h3>Account Login</h3>
+          <p>Hello Developer, Welcome Back!</p>
+        </div> -->
+
+        <form class="form auth__form" method="post">
+          {% csrf_token %}
+          <!-- Input:Email -->
+          <div class="form__field">
+            <label for="formInput#text">Email: </label>
+            <input
+              class="input input--text"
+              id="formInput#text"
+              type="text"
+              name="email"
+              placeholder="Enter your email..."
+            />
+          </div>
+
+          <!-- Input:Password -->
+          <div class="form__field">
+            <label for="formInput#password">Password: </label>
+            <input
+              class="input input--password"
+              id="formInput#passowrd"
+              type="password"
+              name="password"
+              placeholder="••••••••"
+            />
+          </div>
+          <div class="auth__actions">
+            <input class="btn btn--sub btn--lg" type="submit" value="Log In" />
+            <a href="{% url 'reset_password' %}">Forget Password?</a>
+          </div>
+          {% for msg in messages %}
+              <p>{{ msg }}</p>
+          {% endfor %}
+        </form>
+        <div class="auth__alternative">
+          <p>Don’t have an Account?</p>
+          <a href="{% url 'singup' %}">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
